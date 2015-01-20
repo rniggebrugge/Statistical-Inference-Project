@@ -19,7 +19,7 @@ In the simulation 1000 samples, each containing 40 random values from the expone
 
 ```{r create-samples}
 
-n      <- 40      # sample size
+n      <- 40     # sample size
 lambda <- 0.2     # lambda (rate parameter)
 means  <- NULL    # list containing all sample means
 sims   <- 1000    # number of samples taken
@@ -29,6 +29,7 @@ for (i in 1:sims)
         sample <- rexp(n,lambda)
         means  <- c( means, mean(sample))
         }
+
 ```
 
 The set *means* will be used to test theoretical predications.
@@ -76,10 +77,55 @@ abline(h=0.625, col="blue")
 
 <br>
 
-```{r}
-x<-seq(3,8,by=0.01)
-y<-dnorm(x, mean=5, sd = 0.625)
-plot(x,y)
-library(lattice)
-histogram(means)
+####Normal distribution
+
+The distibution of the means, according to the CLT, should approximate a normal distribution. In order to check this, the 1000 means are plotted in a histogram. By comparison the real normal distrution (mean=5, sd=sqrt(var)=5/sqrt(40)=0.79) is plotted over the histogram (blue line). As can be seen the histogram indeed resembles the normal distribution.
+
+```{r histogram-rexp-samples}
+hist(means, density=40, breaks=40, prob=TRUE, ylim=c(0,0.66))
+curve(dnorm(x, mean=5, sd=0.79), col="blue", lwd=2, add=TRUE, yaxt="n")
 ```
+
+
+To show the difference between the distribution of random exponentials and the distribution of means of a large number of samples of exponentials, we will make another simulation. In order to compare the two sets, we again take 40,000 exponentials, but instead of dividing these over 1,000 samples this time they will be treated as one large collection. The resulting histogram (below) is very different. It does resample closely the exponential distribution function (blue line), as it to be expected.
+
+```{r histogram-rexp}
+x <-rexp(n*sims,lambda)
+hist(x, density=40, breaks=40, prob=TRUE)
+curve(dexp(x, lambda), col="blue", lwd=2, add=TRUE, yaxt="n")
+```
+
+
+In order to show the CLT does apply to all distrubition functions, not only the exponential distribution, we will repeat the previous steps with another function, the uniform distribution. Again the distribution of means of a large number of samples should resemble a normal distribution, whereas the distribution of a large number of random uniforms should resemble closely the uniform distribution.
+
+```{r uniform-set-and-sample}
+y1 <- runif(n*sims)
+y2 <- NULL
+for (i in 1:sims)
+        {
+        sample <- runif(n)
+        y2     <- c( y2, mean(sample))
+        }
+```
+
+The *y1* object contains a large (40,000) set of randon uniforms, *y2* contains the means of 1,000 samples of 40 random uniforms. 
+
+Plotting the histogram of 1,000 samples' means and the predicted normal distribution (with mean=0.5 and sd=1/sqrt(12*40):
+
+```{r plot-runif}
+hist(y2, density=40, breaks=40, prob=TRUE)
+curve(dnorm(x, mean=.5, sd=1/sqrt(12*40)), col="blue", lwd=2, add=TRUE, yaxt="n")
+```
+
+Plotting histogram of the large set of random uniforms, and comparing to uniform distribution function (blue line):
+
+```{r plot-runif-large}
+hist(y1, density=40, breaks=40, prob=TRUE)
+curve(dunif(x), col="blue", lwd=2, add=TRUE, yaxt="n")
+```
+
+<br>
+
+####Conclusion
+
+From this short simulation exercise it is clear the Central Limit Theorem accurately predicts the behaviour of sample randoms taken from two different distribution functions (uniform and exponential). The match between predictions and simulations can be improved by increasing the number of simulations, which was set to 1,000 for this report.
