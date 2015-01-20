@@ -40,3 +40,12 @@ ggplot(t, aes(dose,len)) + geom_point() +
 ```
 
 It appears that the average *len* increases with increasing *dose* and that *supp*==**OJ** is associated with higher *len* values than *supp*==**VC**.
+
+
+
+```{r}
+ggplot(data = t,
+       aes(x = supp, y=len)) +
+       geom_boxplot(aes(fill=supp)) +
+       facet_grid(.~dose)
+```
