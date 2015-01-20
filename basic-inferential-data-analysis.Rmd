@@ -1,0 +1,42 @@
+---
+title: "Basic Inferential Data Analysis"
+author: "Remco Niggebrugge"
+date: "01/20/2015"
+output: html_document
+---
+
+```{r libraries-and-data, echo=FALSE, results='hide'}
+library(ggplot2)
+library(datasets)
+data(ToothGrowth)
+t <- ToothGrowth
+```
+
+###Basic exploratory data analysis
+
+The *ToothGrowth* dataset is stored in object <u>**t**</u>. Some basic exploratory information:
+
+```{r basic-exploratory-data}
+## number or rows, columns
+dim(t)
+
+## column names
+names(t)
+
+## structure of dataset
+str(t)
+
+## summary of dataset
+summary(t)
+```
+
+<br>
+Visualize how the *len* variable changes for different values of *dose* and *supp*.
+
+```{r simple-plot}
+ggplot(t, aes(dose,len)) + geom_point() + 
+        geom_smooth(method="lm", se=FALSE) +
+        facet_grid(.~supp)
+```
+
+It appears that the average *len* increases with increasing *dose* and that *supp*==**OJ** is associated with higher *len* values than *supp*==**VC**.

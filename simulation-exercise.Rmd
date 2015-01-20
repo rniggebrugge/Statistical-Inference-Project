@@ -1,0 +1,85 @@
+---
+title: "Simulation Exercise"
+author: "Remco Niggebrugge"
+date: "01/20/2015"
+output: html_document
+---
+
+<br>
+
+####Overview
+
+In this report I will simulate the exponential distribution using R. For a set **lambda** (rate parameter) of **0.2** and a set sample size of **40** I will see whether the mean and the standard deviation of the means of a sufficiently high number of such samples converges to the values predicted by the *Central Limit Theorem (CLT)*. This theorem predicts that the mean of sample means converges to the mean of the exponential distribution (1/lambda) and the standard deviation of the sample means converges to the standard deviation of the exponential distribution divided by square root of sample size (1/(lambda*sqrt(40)). Furtermore the theorom predicts that the distribution of the means approaches a normal distribution.
+
+<br>
+
+####Simulation
+
+In the simulation 1000 samples, each containing 40 random values from the exponential distribution are created. This set of samples will than be compared to the theoretical predictions.
+
+```{r create-samples}
+
+n      <- 40      # sample size
+lambda <- 0.2     # lambda (rate parameter)
+means  <- NULL    # list containing all sample means
+sims   <- 1000    # number of samples taken
+
+for (i in 1:sims)
+        {
+        sample <- rexp(n,lambda)
+        means  <- c( means, mean(sample))
+        }
+```
+
+The set *means* will be used to test theoretical predications.
+
+<br>
+
+#####Simulation version theory: mean of the distribution
+
+The mean of the means of the samples should be close to the distribution mean. Therefore we expect the mean of means to be around *1/lambda = 5*. And indeed this seems to be the case:
+
+```{r predicted-mean-of-means}
+mean(means)
+```
+
+this is the case.
+
+Futhermore, using the complete set of means, we can plot the cummulative mean value against the number of means considered. The resulting graph (green line) should get close to the predicted value (blue horizontal line).
+
+```{r plot-mean}
+mean_means <- cumsum(means[1:sims])/(1:sims)
+plot(1:sims,mean_means, type="l", col="green", xlab="number of samples",
+     ylab="cummulative mean", main="Cummulative mean as number of samples increases")
+abline(h=5, col="blue")
+```
+
+<br>
+
+#####Simulation version theory: variance of the distribution
+
+The variance of the distribution of means is predicted to be the variance of the distribution divided by the sample size. Therefore **Var(X')** should be close to *Var(dist)/N = 25/40 = 0.625*. And indeed this seems to be the case:
+
+```{r predicated-variance-of-means}
+var(means)
+```
+
+Futhermore, using the complete set of means, we can plot the variance value against the number of means considered. The resulting graph (green line) should get close to the predicted value (blue horizontal line).
+
+```{r plot-var}
+var_means = NULL
+for(i in 1:sims) var_means <- c( var_means, var(means[1:i]))
+plot(1:sims,var_means, type="l", col="green", xlab="number of samples",
+     ylab="cummulative variance", main="Cummulative variance as number of samples increases")
+abline(h=0.625, col="blue")
+```
+
+<br>
+
+```{r}
+x<-seq(3,8,by=0.01)
+y<-dnorm(x, mean=5, sd = 0.625)
+plot(x,y)
+library(lattice)
+histogram(means)
+```
