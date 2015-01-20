@@ -2,7 +2,7 @@
 title: "Simulation Exercise"
 author: "Remco Niggebrugge"
 date: "01/20/2015"
-output: html_document
+output: word_document
 ---
 
 <br>
